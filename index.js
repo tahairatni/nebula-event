@@ -40,7 +40,7 @@ app.post('/transmit', upload.single('file'), async (req, res) => {
     } catch (err) { res.status(500).json({ error: "[CONNECTION LOST.]" }); }
 });
 
-// 3. FRONTEND
+// 3. FRONTEND (CLEAN TEXT VERSION)
 app.get('/', (req, res) => {
     res.send(`
 <!DOCTYPE html>
@@ -63,7 +63,6 @@ app.get('/', (req, res) => {
         .scenario-log::-webkit-scrollbar { width: 4px; }
         .scenario-log::-webkit-scrollbar-thumb { background: white; }
         .details { font-size: 0.85rem; line-height: 2; font-weight: bold; text-transform: uppercase; }
-        .details span { color: #000; background: rgba(255,255,255,0.7); padding: 0 4px; }
         .input-group { margin-bottom: 12px; }
         label { font-size: 0.75rem; display: block; margin-bottom: 5px; opacity: 0.9; font-weight: bold; }
         select, input[type="text"], input[type="file"], .btn { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid white; color: white; padding: 12px; font-weight: bold; font-size: 0.85rem; box-sizing: border-box; }
@@ -81,12 +80,12 @@ app.get('/', (req, res) => {
         <div id="initial-ui">
             <div class="scenario-log">
                 <div class="details">
-                    CATEGORY: <span>MAIN</span><br>
-                    DIFFICULTY: <span>F</span><br>
-                    CLEAR CONDITION: TRANSMIT <span>BEST ASSETS</span> TO THE THEATRE NEBULA.<br>
-                    TIME LIMIT: <span>7 DAYS</span><br>
-                    REWARDS: <span>SPECIAL DISCORD ROLE</span><br>
-                    PENALTY FOR FAILURE: <span>???</span>
+                    CATEGORY: MAIN<br>
+                    DIFFICULTY: F<br>
+                    CLEAR CONDITION: TRANSMIT BEST ASSETS TO THE THEATRE NEBULA.<br>
+                    TIME LIMIT: 7 DAYS<br>
+                    REWARDS: SPECIAL DISCORD ROLE<br>
+                    PENALTY FOR FAILURE: ???
                 </div>
             </div>
             <div class="input-group">
