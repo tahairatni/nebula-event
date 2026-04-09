@@ -40,7 +40,7 @@ app.post('/transmit', upload.single('file'), async (req, res) => {
     } catch (err) { res.status(500).json({ error: "[CONNECTION LOST.]" }); }
 });
 
-// 3. FRONTEND (SCROLLING LOG VERSION)
+// 3. FRONTEND
 app.get('/', (req, res) => {
     res.send(`
 <!DOCTYPE html>
@@ -52,55 +52,24 @@ app.get('/', (req, res) => {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css" />
     <style>
         body { background: #000; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; overflow-x: hidden; }
-        
-        .window { 
-            background: #3498db; 
-            width: 95%; 
-            max-width: 500px; /* Maximum width for clean look */
-            padding: 55px 45px; 
-            position: relative; 
-            box-shadow: 0 0 40px rgba(52, 152, 219, 0.5); 
-            box-sizing: border-box;
-        }
-
+        .window { background: #3498db; width: 95%; max-width: 500px; padding: 55px 45px; position: relative; box-shadow: 0 0 40px rgba(52, 152, 219, 0.5); box-sizing: border-box; }
         .window::before { content: ""; position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; border: 1px solid rgba(255, 255, 255, 0.8); pointer-events: none; }
         .window::after { content: ""; position: absolute; top: 16px; left: 16px; right: 16px; bottom: 16px; border: 1px solid rgba(255, 255, 255, 0.4); pointer-events: none; }
-        
         .glitch-tl { position: absolute; top: -5px; left: -5px; width: 45px; height: 45px; border-top: 6px solid #3498db; border-left: 6px solid #3498db; }
         .glitch-br { position: absolute; bottom: -5px; right: -5px; width: 45px; height: 45px; border-bottom: 6px solid #3498db; border-right: 6px solid #3498db; }
         .system-controls { position: absolute; top: 18px; right: 20px; font-family: monospace; font-size: 11px; letter-spacing: 3px; }
-        
         h2 { text-align: center; font-size: 1.1rem; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
-
-        /* SCROLLING DATA LOG */
-        .scenario-log {
-            max-height: 200px; /* Limits height to trigger scroll */
-            overflow-y: auto;
-            margin-bottom: 25px;
-            padding-right: 10px;
-            scrollbar-width: thin;
-            scrollbar-color: white transparent;
-        }
-
+        .scenario-log { max-height: 180px; overflow-y: auto; margin-bottom: 25px; padding-right: 10px; scrollbar-width: thin; scrollbar-color: white transparent; }
         .scenario-log::-webkit-scrollbar { width: 4px; }
         .scenario-log::-webkit-scrollbar-thumb { background: white; }
-
         .details { font-size: 0.85rem; line-height: 2; font-weight: bold; text-transform: uppercase; }
         .details span { color: #000; background: rgba(255,255,255,0.7); padding: 0 4px; }
-
         .input-group { margin-bottom: 12px; }
         label { font-size: 0.75rem; display: block; margin-bottom: 5px; opacity: 0.9; font-weight: bold; }
-        
-        select, input[type="text"], input[type="file"], .btn { 
-            width: 100%; background: rgba(0,0,0,0.2); border: 1px solid white; color: white; 
-            padding: 12px; font-weight: bold; font-size: 0.85rem; box-sizing: border-box;
-        }
-
+        select, input[type="text"], input[type="file"], .btn { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid white; color: white; padding: 12px; font-weight: bold; font-size: 0.85rem; box-sizing: border-box; }
         .btn { background: white; color: #3498db; cursor: pointer; border: none; margin-top: 15px; text-transform: uppercase; }
-        
         #preview-section { display: none; text-align: center; margin-top: 20px; }
         #preview-img { border: 2px solid white; max-width: 160px; background: #000; margin-bottom: 15px; }
-
         #crop-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column; align-items: center; justify-content: center; }
         .crop-container { background: #3498db; padding: 25px; border: 2px solid white; width: 90%; max-width: 400px; }
     </style>
@@ -108,49 +77,38 @@ app.get('/', (req, res) => {
 <body>
     <div class="window">
         <div class="glitch-tl"></div><div class="glitch-br"></div><div class="system-controls">_ ▢ X</div>
-        
         <h2>&lt;MAIN SCENARIO #1 - ASSET OFFERING&gt;</h2>
-        
         <div id="initial-ui">
             <div class="scenario-log">
                 <div class="details">
                     CATEGORY: <span>MAIN</span><br>
                     DIFFICULTY: <span>F</span><br>
-                    CLEAR CONDITION: TRANSMIT <span>BEST ASSETS</span> (EMOJI/STICKERS) TO THE THEATRE NEBULA.<br>
+                    CLEAR CONDITION: TRANSMIT <span>BEST ASSETS</span> TO THE THEATRE NEBULA.<br>
                     TIME LIMIT: <span>7 DAYS</span><br>
                     REWARDS: <span>SPECIAL DISCORD ROLE</span><br>
                     PENALTY FOR FAILURE: <span>???</span>
                 </div>
             </div>
-            
             <div class="input-group">
                 <label>[IDENTIFY YOURSELF]</label>
                 <input type="text" id="nickname" placeholder="ENTER DISCORD NAME...">
             </div>
-            
             <div class="input-group">
                 <label>[SELECT CATEGORY]</label>
-                <select id="type">
-                    <option value="emoji">EMOJI (128x128)</option>
-                    <option value="sticker">STICKER (320x320)</option>
-                </select>
+                <select id="type"><option value="emoji">EMOJI</option><option value="sticker">STICKER</option></select>
             </div>
-            
             <div class="input-group">
                 <label>[FILE SELECTION]</label>
                 <input type="file" id="fileInput" accept="image/*">
             </div>
         </div>
-
         <div id="preview-section">
             <p style="font-size: 0.8rem; margin-bottom: 10px;">[PREVIEWING OFFERING]</p>
             <img id="preview-img" src="">
             <button class="btn" id="finalizeBtn">VALIDATE & TRANSMIT</button>
         </div>
-        
         <p id="msg" style="text-align:center; font-size:0.75rem; margin-top:15px;"></p>
     </div>
-
     <div id="crop-overlay">
         <div class="crop-container">
             <p style="text-align:center; font-size: 0.85rem; margin-bottom: 15px;">[ADJUST ASSET PROBABILITY]</p>
@@ -158,13 +116,11 @@ app.get('/', (req, res) => {
             <button class="btn" id="confirmCropBtn">CONFIRM CROP</button>
         </div>
     </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
     <script>
         let croppie; let finalBlob;
         let id = localStorage.getItem('inc_id') || Math.random().toString(36).slice(2);
         localStorage.setItem('inc_id', id);
-        
         const fileInput = document.getElementById('fileInput');
         fileInput.onchange = function() {
             if (!this.files[0]) return;
@@ -180,7 +136,6 @@ app.get('/', (req, res) => {
             reader.onload = (e) => croppie.bind({ url: e.target.result });
             reader.readAsDataURL(this.files[0]);
         };
-
         document.getElementById('confirmCropBtn').onclick = () => {
             const size = document.getElementById('type').value === 'sticker' ? 320 : 128;
             croppie.result({ type: 'blob', size: { width: size, height: size } }).then(blob => {
@@ -191,7 +146,6 @@ app.get('/', (req, res) => {
                 document.getElementById('preview-img').src = URL.createObjectURL(blob);
             });
         };
-
         document.getElementById('finalizeBtn').onclick = () => {
             const formData = new FormData();
             formData.append('file', finalBlob);
@@ -207,3 +161,7 @@ app.get('/', (req, res) => {
     </script>
 </body>
 </html>
+    `);
+});
+
+app.listen(PORT, () => console.log("System Active."));
