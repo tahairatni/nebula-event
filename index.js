@@ -40,7 +40,7 @@ app.post('/transmit', upload.single('file'), async (req, res) => {
     } catch (err) { res.status(500).json({ error: "[CONNECTION LOST.]" }); }
 });
 
-// 3. FRONTEND (WIDE VERSION)
+// 3. FRONTEND (SCROLLING LOG VERSION)
 app.get('/', (req, res) => {
     res.send(`
 <!DOCTYPE html>
@@ -51,14 +51,13 @@ app.get('/', (req, res) => {
     <title>[Main Scenario #01]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css" />
     <style>
-        body { background: #000; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        body { background: #000; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; overflow-x: hidden; }
         
-        /* WIDENED PANEL */
         .window { 
             background: #3498db; 
             width: 95%; 
-            max-width: 450px; /* Increased from 360px to 450px */
-            padding: 55px 40px; /* Increased side padding to stop clipping */
+            max-width: 500px; /* Maximum width for clean look */
+            padding: 55px 45px; 
             position: relative; 
             box-shadow: 0 0 40px rgba(52, 152, 219, 0.5); 
             box-sizing: border-box;
@@ -69,31 +68,38 @@ app.get('/', (req, res) => {
         
         .glitch-tl { position: absolute; top: -5px; left: -5px; width: 45px; height: 45px; border-top: 6px solid #3498db; border-left: 6px solid #3498db; }
         .glitch-br { position: absolute; bottom: -5px; right: -5px; width: 45px; height: 45px; border-bottom: 6px solid #3498db; border-right: 6px solid #3498db; }
-        
         .system-controls { position: absolute; top: 18px; right: 20px; font-family: monospace; font-size: 11px; letter-spacing: 3px; }
         
-        h2 { text-align: center; font-size: 1.2rem; text-transform: uppercase; margin-bottom: 30px; letter-spacing: 1px; }
-        .details { font-size: 0.9rem; line-height: 2; margin-bottom: 30px; font-weight: bold; text-transform: uppercase; }
-        
-        /* INPUT STYLING */
-        .input-group { margin-bottom: 15px; position: relative; z-index: 5; }
-        label { font-size: 0.75rem; display: block; margin-bottom: 5px; opacity: 0.9; }
-        
-        select, input[type="text"], input[type="file"], .btn { 
-            width: 100%; 
-            background: rgba(0,0,0,0.15); 
-            border: 1px solid white; 
-            color: white; 
-            padding: 12px; 
-            font-weight: bold; 
-            font-size: 0.85rem; 
-            box-sizing: border-box;
+        h2 { text-align: center; font-size: 1.1rem; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
+
+        /* SCROLLING DATA LOG */
+        .scenario-log {
+            max-height: 200px; /* Limits height to trigger scroll */
+            overflow-y: auto;
+            margin-bottom: 25px;
+            padding-right: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: white transparent;
         }
 
-        .btn { background: white; color: #3498db; cursor: pointer; border: none; margin-top: 20px; text-transform: uppercase; }
+        .scenario-log::-webkit-scrollbar { width: 4px; }
+        .scenario-log::-webkit-scrollbar-thumb { background: white; }
+
+        .details { font-size: 0.85rem; line-height: 2; font-weight: bold; text-transform: uppercase; }
+        .details span { color: #000; background: rgba(255,255,255,0.7); padding: 0 4px; }
+
+        .input-group { margin-bottom: 12px; }
+        label { font-size: 0.75rem; display: block; margin-bottom: 5px; opacity: 0.9; font-weight: bold; }
+        
+        select, input[type="text"], input[type="file"], .btn { 
+            width: 100%; background: rgba(0,0,0,0.2); border: 1px solid white; color: white; 
+            padding: 12px; font-weight: bold; font-size: 0.85rem; box-sizing: border-box;
+        }
+
+        .btn { background: white; color: #3498db; cursor: pointer; border: none; margin-top: 15px; text-transform: uppercase; }
         
         #preview-section { display: none; text-align: center; margin-top: 20px; }
-        #preview-img { border: 2px solid white; max-width: 180px; background: #000; margin-bottom: 15px; }
+        #preview-img { border: 2px solid white; max-width: 160px; background: #000; margin-bottom: 15px; }
 
         #crop-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column; align-items: center; justify-content: center; }
         .crop-container { background: #3498db; padding: 25px; border: 2px solid white; width: 90%; max-width: 400px; }
@@ -102,10 +108,20 @@ app.get('/', (req, res) => {
 <body>
     <div class="window">
         <div class="glitch-tl"></div><div class="glitch-br"></div><div class="system-controls">_ ▢ X</div>
+        
         <h2>&lt;MAIN SCENARIO #1 - ASSET OFFERING&gt;</h2>
         
         <div id="initial-ui">
-            <div class="details">CATEGORY: MAIN<br>DIFFICULTY: F<br>CLEAR CONDITION: TRANSMIT <span>BEST ASSETS</span></div>
+            <div class="scenario-log">
+                <div class="details">
+                    CATEGORY: <span>MAIN</span><br>
+                    DIFFICULTY: <span>F</span><br>
+                    CLEAR CONDITION: TRANSMIT <span>BEST ASSETS</span> (EMOJI/STICKERS) TO THE THEATRE NEBULA.<br>
+                    TIME LIMIT: <span>7 DAYS</span><br>
+                    REWARDS: <span>SPECIAL DISCORD ROLE</span><br>
+                    PENALTY FOR FAILURE: <span>???</span>
+                </div>
+            </div>
             
             <div class="input-group">
                 <label>[IDENTIFY YOURSELF]</label>
@@ -127,12 +143,12 @@ app.get('/', (req, res) => {
         </div>
 
         <div id="preview-section">
-            <p style="font-size: 0.8rem; margin-bottom: 15px;">[PREVIEWING OFFERING]</p>
+            <p style="font-size: 0.8rem; margin-bottom: 10px;">[PREVIEWING OFFERING]</p>
             <img id="preview-img" src="">
             <button class="btn" id="finalizeBtn">VALIDATE & TRANSMIT</button>
         </div>
         
-        <p id="msg" style="text-align:center; font-size:0.75rem; margin-top:20px; min-height: 1em;"></p>
+        <p id="msg" style="text-align:center; font-size:0.75rem; margin-top:15px;"></p>
     </div>
 
     <div id="crop-overlay">
@@ -182,9 +198,7 @@ app.get('/', (req, res) => {
             formData.append('incarnationId', id);
             formData.append('nickname', document.getElementById('nickname').value);
             formData.append('type', document.getElementById('type').value);
-            
             document.getElementById('msg').innerText = "[TRANSMITTING...]";
-            
             fetch('/transmit', { method: 'POST', body: formData })
             .then(res => res.json()).then(data => {
                 document.getElementById('msg').innerText = data.success ? "[OFFERING ACCEPTED.]" : data.error;
@@ -193,7 +207,3 @@ app.get('/', (req, res) => {
     </script>
 </body>
 </html>
-    `);
-});
-
-app.listen(PORT, () => console.log("Wide System Active."));
