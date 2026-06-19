@@ -6,7 +6,7 @@ const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
 // 1. CONFIGURATION
-const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1491874696784777310/qzZJcI4BvXVRtKCCb8zv2IyLSC0BJqvAllZR12_XCYkhFoO5BXxT1V0gVZ2HMaqIMHDm'; 
+const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1517562799835054180/TAwdLbdLT-kdVQSpwibNnP-Eon2869qZK2J1Avvt_kFkcZBUGm-r2Ch8j0JGLHOaiZxu'; 
 const PORT = process.env.PORT || 3000;
 const SUBMISSION_LIMIT = 3; 
 const incarnationDatabase = {}; 
